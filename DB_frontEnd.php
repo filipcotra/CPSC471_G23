@@ -297,7 +297,7 @@
 			<option value="12">donor_addresses</option>
 			<option value="13">donor_phones</option>
 			<option value="14">donor_technician</option>
-			<option value="15">hospital</option>
+			<option value="=,p,q,r">hospital</option>
 			<option value="16">hospital_employee</option>
 			<option value="17">nurse</option>
 			<option value="18">past_employer_bloodbank</option>
@@ -342,6 +342,10 @@
 			<option value="m">MName</option>
 			<option value="n">ReceptionistName</option>
 			<option value="o">TechnicianName</option>
+			//Hospital Attributes
+			<option value="p">Name</option>
+			<option value="q">PhoneNum</option>
+			<option value="r">Address</option>
 		</select>
 
 		<label id="chooseAttributeInit">Choose an Attribute</label>
@@ -452,6 +456,7 @@
 //------------------------- Code -------------------------------------//
 	// Getting the db_table div so that it can be updated. Also setting
 	// a variable to track the new innerHTML to be inserted.
+	var first = true;
 	const tableDiv = document.getElementById('table_full');
 	var tableInner = ' ';
 	const tableColDiv = document.getElementById('table_cols');
@@ -459,6 +464,7 @@
 	// This function will make a new table from the search results.
 	// Search results will be a 2d array.
 	function createTable(searchResults){
+		first = true;
 		tableInner = ' ';
 		colInner = ' ';
 		tableInner += "<table>";
@@ -475,10 +481,13 @@
 				tableInner += searchResults[i][j];
 				tableInner += "</td>";
 				// Adding the key to the header.
-				colInner += "<td>";
-				colInner += Object.keys(searchResults[i])[j + Object.keys(searchResults[i]).length/2];
-				colInner += "</td>";
+				if(first){
+					colInner += "<td>";
+					colInner += Object.keys(searchResults[i])[j + Object.keys(searchResults[i]).length/2];
+					colInner += "</td>";
+				}
 			}
+			first = false;
 			tableInner += "</tr>";
 		}
 		tableInner += "</table>";
