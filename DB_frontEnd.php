@@ -43,7 +43,7 @@
 	height: 100%;
 	table-layout: fixed;
 	color: #000000;
-	background-color: #c0c0c0:
+	background-color: #ffffff:
 	text-align: center;
 }
 
@@ -65,6 +65,23 @@
 	table-layout: fixed;
 }
 
+#table_cols table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 100%;
+	table-layout: fixed;
+	color: #000000;
+	background-color: #d3d3d3:
+	text-align: center;
+}
+
+#table_cols td {
+	background-color:#d3d3d3;
+	border: 2px solid #000000;
+	height: 20%;
+	text-align: center;
+}
+
 #header {
 	display:block;
 	text-align:center;
@@ -79,7 +96,7 @@
 	gap: 0.5%;
 	padding: 0.5%;
 	grid-template-columns: 33% 33% 33%;
-	grid-template-rows: 20% 10% 65% 5%;
+	grid-template-rows: 20% 10% 10% 55% 5%;
 	background-color:powderblue;
 	height: 80%;
 }
@@ -123,14 +140,22 @@
 	grid-column: 1/-1;
 }
 
-.db_table {
+.db_colNames {
+	background-color:#d3d3d3;
 	border:3px solid black;
 	grid-row: 3;
 	grid-column: 1/-1;
 }
 
-.searchButton {
+.db_table {
+	background-color:#ffffff;
+	border:3px solid black;
 	grid-row: 4;
+	grid-column: 1/-1;
+}
+
+.searchButton {
+	grid-row: 5;
 	grid-column: 2;
 	color: #1c2e4a;
 	display: inline-block;
@@ -138,7 +163,7 @@
 }
 
 .loginButton {
-	grid-row: 4;
+	grid-row: 5;
 	grid-column: 3;
 	color: #1c2e4a;
 	display: inline-block;
@@ -206,30 +231,33 @@
 		<label id="chooseEntity">Choose an entity:</label>
 		<select id="entity">
 			<option value="+">-Select an Entity Type-</option>
-			<option value="=,a,b,c,d">Administration of Blood</option>
-			<option value="2">Advertiser</option>
-			<option value="3">Blood</option>
-			<option value="4">Blood Bank</option>
-			<option value="5">Blood Bank Employees</option>
-			<option value="6">Blood Bank Receptionist</option>
-			<option value="7">Blood Tester</option>
-			<option value="8">Blood Storage</option>
-			<option value="9">Distributor</option>
-			<option value="10">Delivery of Blood</option>
-			<option value="11">Doctor</option>
-			<option value="12">Donation</option>
-			<option value="13">Donation Technician</option>
-			<option value="=,e,f,g,h,i,j,k">Donor</option>
-			<option value="15">Donor Addresses</option>
-			<option value="16">Donor Contact Information</option>
-			<option value="17">Hospital</option>
-			<option value="18">Hospital Employees</option>
-			<option value="19">Nurse</option>
-			<option value="20">Past Employers of Blood Bank Employees</option>
-			<option value="21">Past Employers of Hospital Employees</option>
-			<option value="e,f,g,h,i,j,k">Recipient</option>
-			<option value="23">Recipient Addresses</option>
-			<option value="24">Recipient Contact Information</option>
+			<option value="=,a,b,c,d">administered_to</option>
+			<option value="2">advertiser</option>
+			<option value="3">blood</option>
+			<option value="=,e,f,g,h">blood_bank</option>
+			<option value="5">blood_bank_employee</option>
+			<option value="6">blood_tester</option>
+			<option value="7">delivered_blood_to</option>
+			<option value="8">distributor</option>
+			<option value="9">doctor</option>
+			<option value="10">donates_to</option>
+			<option value="=,i,j,k,l,m,n,o">donor</option>
+			<option value="12">donor_addresses</option>
+			<option value="13">donor_phones</option>
+			<option value="14">donor_technician</option>
+			<option value="15">hospital</option>
+			<option value="16">hospital_employee</option>
+			<option value="17">nurse</option>
+			<option value="18">past_employer_bloodbank</option>
+			<option value="19">past_employer_hospital</option>
+			<option value="20">receptionist</option>
+			<option value="=,i,j,k,l,m,n,o">recipient</option>
+			<option value="22">recipient_addresses</option>
+			<option value="23">recipient_phones</option>
+			<option value="24">sends_results</option>
+			<option value="25">stored_by</option>
+			<option value="26">transferred_blood_to_bank</option>
+			<option value="27">transferred_blood_to_distributor</option>
 		</select>
 	</div>
 
@@ -245,14 +273,19 @@
 			<option value="b">Date of Donation</option>
 			<option value="c">Receipient Health ID</option>
 			<option value="d">Date of Administration</option>
+			//Blood Bank Attributes
+			<option value="e">Name</option>
+			<option value="f">StorageConditions</option>
+			<option value="g">Address</option>
+			<option value="h">PhoneNum</option>
 			//Donor and Recipient Attributes
-			<option value="e">Age</option>
-			<option value="f">FName</option>
-			<option value="g">HealthID</option>
-			<option value="h">LName</option>
-			<option value="i">MName</option>
-			<option value="j">ReceptionistName</option>
-			<option value="k">TechnicianName</option>
+			<option value="i">Age</option>
+			<option value="j">FName</option>
+			<option value="k">HealthID</option>
+			<option value="l">LName</option>
+			<option value="m">MName</option>
+			<option value="n">ReceptionistName</option>
+			<option value="o">TechnicianName</option>
 		</select>
 
 		<label id="chooseAttributeInit">Choose an Attribute:</label>
@@ -276,6 +309,9 @@
 		</table>
 	</div>
 	
+	<div class="db_colNames" id="table_cols">
+	</div>
+	
 	<div class="db_table" id="table_full">
 	</div>
 	
@@ -293,6 +329,7 @@
 	var entitySelection = null;
 	var attributeSelection = null;
 	var attributeEntry = null;
+	var queryResult = null;
 //------------------------- Desc -------------------------------------//
 // This method is to update the display table based on a search result.
 // It will do so by updating the db_table div.
@@ -301,26 +338,38 @@
 	// a variable to track the new innerHTML to be inserted.
 	const tableDiv = document.getElementById('table_full');
 	var tableInner = ' ';
+	const tableColDiv = document.getElementById('table_cols');
+	var colInner = ' ';
 	// This function will make a new table from the search results.
 	// Search results will be a 2d array.
 	function createTable(searchResults){
 		tableInner = ' ';
+		colInner = ' ';
 		tableInner += "<table>";
+		colInner += "<table>";
+		colInner += "<tr>";
 		// Making rows based on searchResults length.
 		for(let i = 0; i < searchResults.length; i++){
 			tableInner += "<tr>";
 			// Making columns based on length of each searchResults
 			// result. These should be constant.
-			for(let j = 0; j < searchResults[i].length; j++){
+			for(let j = 0; j < Object.keys(searchResults[i]).length/2; j++){
 				// Adding a column containing the search result attribute.
 				tableInner += "<td>";
-				tableInner += Math.random();
+				tableInner += searchResults[i][j];
 				tableInner += "</td>";
+				// Adding the key to the header.
+				colInner += "<td>";
+				colInner += Object.keys(searchResults[i])[j + Object.keys(searchResults[i]).length/2];
+				colInner += "</td>";
 			}
 			tableInner += "</tr>";
 		}
 		tableInner += "</table>";
+		colInner += "</tr>";
+		colInner += "</table>";
 		tableDiv.innerHTML = tableInner;
+		tableColDiv.innerHTML = colInner;
 	}
 //------------------------- Desc -------------------------------------//
 // This method is to search the database. I will only be implementing test
@@ -334,8 +383,9 @@
 			url: 'runSelect.php',
 			data: { par1: entitySelection, par2: attributeSelection, par3: attributeEntry },
 			success: function(data){
-				alert(data);
-			}
+				createTable(data);
+			},
+			dataType:"json"
 		});	
 		//createTable(runSelect(entitySelection, attributeSelection, attributeEntry));
 	}
@@ -376,6 +426,9 @@
 				isDone = false;
 			}
 			entitySelection = entity.options[entity.selectedIndex].text;
+			if(entitySelection == "-Select an Entity Type-"){
+				entitySelection = null;
+			}
 			//Update dropdown elements
 			attr.innerHTML = attrOptions.filter(
       			option => event.target.value.includes(option.value)
@@ -387,12 +440,15 @@
 		'change',
 		(e) => {
 			attributeSelection = attr.options[attr.selectedIndex].text;
+			if(attributeSelection == "-Select an Attribute-"){
+				attributeSelection = null;
+			}
 		}
 	)
 	enterAttr.addEventListener(
 		'input',
 		(e) => {
-			attributeEntry = enterAttr.value;
+			attributeEntry = enterAttr.text;
 		}
 	)
 </script>
