@@ -1,6 +1,7 @@
 <html>
 
 <head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <style>
 
 :root {
@@ -195,7 +196,7 @@
 <body>
 
 <div id="header">
-	<h1>CPSC471 Final Project - G23<font color=#880808> Blood Bank<font color=#000000> Database Management System</h1>
+	<h1><font color=#880808> Blood Bank<font color=#000000> Database Management System - CPSC471 G23</h1>
 </div>
 	
 	<br></br>
@@ -205,7 +206,7 @@
 		<label id="chooseEntity">Choose an entity:</label>
 		<select id="entity">
 			<option value="+">-Select an Entity Type-</option>
-			<option value="a,b,c,d">Administration of Blood</option>
+			<option value="=,a,b,c,d">Administration of Blood</option>
 			<option value="2">Advertiser</option>
 			<option value="3">Blood</option>
 			<option value="4">Blood Bank</option>
@@ -218,7 +219,7 @@
 			<option value="11">Doctor</option>
 			<option value="12">Donation</option>
 			<option value="13">Donation Technician</option>
-			<option value="e,f,g,h,i,j,k">Donor</option>
+			<option value="=,e,f,g,h,i,j,k">Donor</option>
 			<option value="15">Donor Addresses</option>
 			<option value="16">Donor Contact Information</option>
 			<option value="17">Hospital</option>
@@ -237,6 +238,8 @@
 		<select id="attribute">
 			//If default is for some reason re-selected
 			<option value="+">-First Select an Entity-</option>
+			//Once a value is selected - always included
+			<option value="=">-Select an Attribute-</option>
 			//AdministeredTo Attributes
 			<option value="a">Donor Health ID</option>
 			<option value="b">Date of Donation</option>
@@ -286,6 +289,10 @@
 </div>
 
 <script>
+	// Setting fields to hold dropdown menu information
+	var entitySelection = null;
+	var attributeSelection = null;
+	var attributeEntry = null;
 //------------------------- Desc -------------------------------------//
 // This method is to update the display table based on a search result.
 // It will do so by updating the db_table div.
@@ -321,17 +328,17 @@
 // actual DB results.
 //------------------------- Code -------------------------------------//
 	// Test value
-	var res = [["1.1", "1.2", "1.3", "1.4"],["2.1", "2.2", "2.3", "2.4"]];
-	function search(){
-		try{	
-			createTable(res);
-		}catch(error){
-			window.alert(error);
-		}
+	function search(){	
+		$.ajax({
+			method: 'POST',
+			url: 'runSelect.php',
+			data: { par1: entitySelection, par2: attributeSelection, par3: attributeEntry },
+			success: function(data){
+				alert(data);
+			}
+		});	
+		//createTable(runSelect(entitySelection, attributeSelection, attributeEntry));
 	}
-</script>
-
-<script>
 //------------------------- Desc -------------------------------------//
 // This method is to update the drop down menus so that they will only 
 // show the appropriate attributes after an entity type is selected.
@@ -344,12 +351,14 @@
 	const attr = document.getElementById('attribute');
 	const attrOptions = [...attr.children];
 	const attrLabel = document.getElementById('chooseAttribute');
+	const entityDropdown = document.getElementById('entity');
+	const enterAttr = document.getElementById('enterBox');
 
 	const attr2 = document.getElementById('attributeInit');
 	const attr2Label = document.getElementById('chooseAttributeInit');
 
 	// Adding event handler to dynamically update the dropdown menus
-	document.getElementById('entity').addEventListener(
+	entityDropdown.addEventListener(
   		'change',
   		(e) => {
 			if (isFirst){
@@ -366,11 +375,26 @@
 				// Set flag to false so this won't happen again
 				isDone = false;
 			}
+			entitySelection = entity.options[entity.selectedIndex].text;
 			//Update dropdown elements
 			attr.innerHTML = attrOptions.filter(
       			option => event.target.value.includes(option.value)
     			).map(option => option.outerHTML).join('');
-  		})
+  		}
+	)
+	// Adding event handlers to collect other info
+	attr.addEventListener(
+		'change',
+		(e) => {
+			attributeSelection = attr.options[attr.selectedIndex].text;
+		}
+	)
+	enterAttr.addEventListener(
+		'input',
+		(e) => {
+			attributeEntry = enterAttr.value;
+		}
+	)
 </script>
 
 </body>
