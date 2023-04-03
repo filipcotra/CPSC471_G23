@@ -172,7 +172,7 @@
 
 .editButton {
 	display: none;
-	grid-row: 3;
+	grid-row: 5;
 	grid-column: 1;
 	color: #1c2e4a;
 	text-align: center;
@@ -276,7 +276,11 @@
 
 <div class="container">
 	<div class="leftSide">
-		<label id="chooseEntity">Choose an entity:</label>
+		<label id="chooseEntity">Choose an entity</label>
+		<br></br>
+		<br></br>
+		<br></br>
+		<br></br>
 		<select id="entity">
 			<option value="+">-Select an Entity Type-</option>
 			<option value="=,a,b,c,d">administered_to</option>
@@ -310,7 +314,11 @@
 	</div>
 
 	<div class="middle">
-		<label id="chooseAttribute" >Choose an Attribute:</label>
+		<label id="chooseAttribute" >Choose an Attribute</label>
+		<br></br>
+		<br></br>
+		<br></br>
+		<br></br>
 		<select id="attribute">
 			//If default is for some reason re-selected
 			<option value="+">-First Select an Entity-</option>
@@ -336,14 +344,22 @@
 			<option value="o">TechnicianName</option>
 		</select>
 
-		<label id="chooseAttributeInit">Choose an Attribute:</label>
+		<label id="chooseAttributeInit">Choose an Attribute</label>
+		<br></br>
+		<br></br>
+		<br></br>
+		<br></br>
 		<select id="attributeInit">
 			<option value="initialize">-First Select an Entity-</option>
 		</select>
 	</div>
 	
 	<div class="rightSide">
-		<label id="enterAttribute">Enter Attribute Value:</label>
+		<label id="enterAttribute">Enter Attribute Value</label>
+		<br></br>
+		<br></br>
+		<br></br>
+		<br></br>
 		<input id="enterBox" type="text">
 	</div>
 
@@ -367,9 +383,10 @@
 		<button type="button" onclick="search()">Search</button>
 	</div>
 	
-		<div class="loginButton">
+	<div class="loginButton">
 		<button type="button" onclick="openLoginPopup()" >Login</button>
 	</div>
+	
 	<div class="editButton" id="editbtn">
 		<button type="button">Edit</button>
 	</div>
@@ -379,17 +396,26 @@
   		<form action="/action_page.php" class="login-container">
 	    	<h1><font color=white>Login to edit database <font color=white></h1>
 	    	<label for="Username"><b>Username</b></label>
-	    	<input type="text" name="Username" required>
+	    	<input type="text" name="Username" id="userField" required>
 	    	<label for="pw"><b>Password</b></label>
-	    	<input type="password" name="pw" required>
+	    	<input type="password" name="pw" id="passwordField" required>
 	    	<button type="button" class="btn" onclick="showEdit()" >Login</button>
 	    	<button type="button" class="btn close" onclick="closeLoginPopup()">Close</button>
 	    </form>
 	</div>
-
+</div>
 <script>
+//------------------------- Desc -------------------------------------//
+// This method is to handle log in button and display the edit button
+// if login is correct.
+//------------------------- Code -------------------------------------//
 	//script for handling login button
 	//change to type="submit" for php for Login
+	const passwordInp = document.getElementById('passwordField');
+	const userInp = document.getElementById('userField');
+	var username = null;
+	var password = null;
+	
 	function openLoginPopup() {
 	  document.getElementById("loginForm").style.display = "block";
 	}
@@ -399,13 +425,22 @@
 	}
 
 	function showEdit() {
-		closeLoginPopup();
-		document.getElementById("editbtn").style.display="inline-block";
+		$.ajax({
+			method: 'POST',
+			url: 'runSelect.php',
+			data: { par1: 'authorizedlogins', par2: username, par3: password },
+			success: function(data){
+				if(data.length > 0){
+					closeLoginPopup();
+					document.getElementById("editbtn").style.display="inline-block";
+				}
+				else{
+					alert("Username or password not found.");
+				}
+			},
+			dataType:"json"
+		});	
 	}
-</script>
-</div>
-
-<script>
 	// Setting fields to hold dropdown menu information
 	var entitySelection = null;
 	var attributeSelection = null;
@@ -468,7 +503,6 @@
 			},
 			dataType:"json"
 		});	
-		//createTable(runSelect(entitySelection, attributeSelection, attributeEntry));
 	}
 //------------------------- Desc -------------------------------------//
 // This method is to update the drop down menus so that they will only 
@@ -529,7 +563,21 @@
 	enterAttr.addEventListener(
 		'input',
 		(e) => {
-			attributeEntry = enterAttr.text;
+			attributeEntry = enterAttr.value;
+		}
+	)
+	
+	userInp.addEventListener(
+		'input',
+		(e) => {
+			username = userInp.value;
+		}
+	)
+	
+	passwordInp.addEventListener(
+		'input',
+		(e) => {
+			password = passwordInp.value;
 		}
 	)
 </script>
