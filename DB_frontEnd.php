@@ -8,7 +8,7 @@
 	--columnHeight: 10%;
 }
 
-table {
+#table_header table {
 	border: 1px solid #000000;
 	width: 100%;
 	height: 100%;
@@ -18,20 +18,48 @@ table {
 	text-align: center;
 }
 
-td {
+#table_header td {
 	border: 2px solid #000000;
 	height: 20%;
 	text-align: center;
 }
 
-thead,th {
+#table_header thead,th {
 	height: 5%;
 	border: 2px solid #000000;
 	background-color: #adadad;
 	color:#000000;
 }
 
-tbody {
+#table_header tbody {
+	background-color: #ebecf0;
+	table-layout: fixed;
+}
+
+#table_full table {
+	border: 1px solid #000000;
+	width: 100%;
+	height: 100%;
+	table-layout: fixed;
+	color: #000000;
+	background-color: #c0c0c0:
+	text-align: center;
+}
+
+#table_full td {
+	border: 2px solid #000000;
+	height: 20%;
+	text-align: center;
+}
+
+#table_full thead,th {
+	height: 5%;
+	border: 2px solid #000000;
+	background-color: #adadad;
+	color:#000000;
+}
+
+#table_full tbody {
 	background-color: #ebecf0;
 	table-layout: fixed;
 }
@@ -50,7 +78,7 @@ tbody {
 	gap: 0.5%;
 	padding: 0.5%;
 	grid-template-columns: 33% 33% 33%;
-	grid-template-rows: 20% 75%;
+	grid-template-rows: 20% 10% 65% 5%;
 	background-color:powderblue;
 	height: 80%;
 }
@@ -88,14 +116,20 @@ tbody {
 	padding:10%;
 }
 
-.db_table {
+.db_header {
 	border:3px solid black;
 	grid-row: 2;
 	grid-column: 1/-1;
 }
 
-.searchButton {
+.db_table {
+	border:3px solid black;
 	grid-row: 3;
+	grid-column: 1/-1;
+}
+
+.searchButton {
+	grid-row: 4;
 	grid-column: 2;
 	color: #1c2e4a;
 	display: inline-block;
@@ -103,7 +137,7 @@ tbody {
 }
 
 .loginButton {
-	grid-row: 3;
+	grid-row: 4;
 	grid-column: 3;
 	color: #1c2e4a;
 	display: inline-block;
@@ -229,65 +263,79 @@ tbody {
 		<input id="enterBox" type="text">
 	</div>
 
-	<div class="db_table">
+	<div class="db_header" id="table_header">
 		<table>
 			<thead>
 				<tr>
-					<th colspan="11">Table Header</th>
+					<th colspan="11">Search Results</th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr>
-					<td>Name 1</td>
-					<td>Name 2</td>
-					<td>Name 3</td>
-					<td>Name 4</td>
-					<td>Name 5</td>
-					<td>Name 6</td>
-					<td>Name 7</td>
-					<td>Name 8</td>
-					<td>Name 9</td>
-					<td>Name 10</td>
-					<td>Name 11</td>
-				</tr>
-				<tr>
-					<td>Column 1</td>
-					<td>Column 2</td>
-					<td>Column 3</td>
-					<td>Column 4</td>
-					<td>Column 5</td>
-					<td>Column 6</td>
-					<td>Column 7</td>
-					<td>Column 8</td>
-					<td>Column 9</td>
-					<td>Column 10</td>
-					<td>Column 11</td>
-				</tr>
-				<tr>
-					<td>Column 1</td>
-					<td>Column 2</td>
-					<td>Column 3</td>
-					<td>Column 4</td>
-					<td>Column 5</td>
-					<td>Column 6</td>
-					<td>Column 7</td>
-					<td>Column 8</td>
-					<td>Column 9</td>
-					<td>Column 10</td>
-					<td>Column 11</td>
-				</tr>
-			</tbody>
 		</table>
 	</div>
-	<div class="searchButton">
-		<button type="button">Search</button>
+	
+	<div class="db_table" id="table_full">
 	</div>
+	
+	<div class="searchButton">
+		<button type="button" onclick="search()">Search</button>
+	</div>
+	
 	<div class="loginButton">
 		<button type="button">Login</button>
 	</div>
 </div>
 
 <script>
+//------------------------- Desc -------------------------------------//
+// This method is to update the display table based on a search result.
+// It will do so by updating the db_table div.
+//------------------------- Code -------------------------------------//
+	// Getting the db_table div so that it can be updated. Also setting
+	// a variable to track the new innerHTML to be inserted.
+	const tableDiv = document.getElementById('table_full');
+	var tableInner = ' ';
+	// This function will make a new table from the search results.
+	// Search results will be a 2d array.
+	function createTable(searchResults){
+		window.alert("1");
+		tableInner += "<table>";
+		// Making rows based on searchResults length.
+		for(let i = 0; i < searchResults.length; i++){
+			tableInner += "<tr>";
+			// Making columns based on length of each searchResults
+			// result. These should be constant.
+			for(let j = 0; j < searchResults[i].length; j++){
+				// Adding a column containing the search result attribute.
+				tableInner += "<td>";
+				tableInner += searchResults[i][j];
+				tableInner += "</td>";
+			}
+			tableInner += "</tr>";
+		}
+		tableInner += "</table>";
+		tableDiv.innerHTML = tableInner;
+	}
+//------------------------- Desc -------------------------------------//
+// This method is to search the database. I will only be implementing test
+// values for now. Somebody else should implement an sql SELECT to search for the
+// actual DB results.
+//------------------------- Code -------------------------------------//
+	// Test value
+	var res = [["1.1", "1.2", "1.3", "1.4"],["2.1", "2.2", "2.3", "2.4"]];
+	function search(){
+		try{	
+			createTable(res);
+		}catch(error){
+			window.alert(error);
+		}
+	}
+</script>
+
+<script>
+//------------------------- Desc -------------------------------------//
+// This method is to update the drop down menus so that they will only 
+// show the appropriate attributes after an entity type is selected.
+//------------------------- Code -------------------------------------//
 	// Setting boolean flag, as the first part of event handler below
 	// should only occur once
 	var isFirst = true;
@@ -324,7 +372,6 @@ tbody {
     			).map(option => option.outerHTML).join('');
   		})
 </script>
-
 
 </body>
 </html>
