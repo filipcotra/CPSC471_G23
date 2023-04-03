@@ -172,7 +172,7 @@
 
 .editButton {
 	display: none;
-	grid-row: 3;
+	grid-row: 5;
 	grid-column: 1;
 	color: #1c2e4a;
 	text-align: center;
