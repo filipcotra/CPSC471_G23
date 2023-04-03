@@ -297,7 +297,6 @@
 	// This function will make a new table from the search results.
 	// Search results will be a 2d array.
 	function createTable(searchResults){
-		window.alert("1");
 		tableInner += "<table>";
 		// Making rows based on searchResults length.
 		for(let i = 0; i < searchResults.length; i++){
@@ -307,7 +306,7 @@
 			for(let j = 0; j < searchResults[i].length; j++){
 				// Adding a column containing the search result attribute.
 				tableInner += "<td>";
-				tableInner += searchResults[i][j];
+				tableInner += Math.random();
 				tableInner += "</td>";
 			}
 			tableInner += "</tr>";
