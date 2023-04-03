@@ -297,6 +297,7 @@
 	// This function will make a new table from the search results.
 	// Search results will be a 2d array.
 	function createTable(searchResults){
+		tableInner = ' ';
 		tableInner += "<table>";
 		// Making rows based on searchResults length.
 		for(let i = 0; i < searchResults.length; i++){
