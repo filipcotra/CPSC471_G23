@@ -295,7 +295,7 @@
 			<option value="2">advertiser</option>
 			<option value="3">blood</option>
 			<option value="=,e,f,g,h">blood_bank</option>
-			<option value="5">blood_bank_employee</option>
+			<option value="=,z1,z2,z3,z4,z5">blood_bank_employee</option>
 			<option value="6">blood_tester</option>
 			<option value="7">delivered_blood_to</option>
 			<option value="8">distributor</option>
@@ -308,7 +308,7 @@
 			<option value="=,p,q,r">hospital</option>
 			<option value="16">hospital_employee</option>
 			<option value="17">nurse</option>
-			<option value="18">past_employer_bloodbank</option>
+			<option value="=,x1,x2">past_employer_bloodbank</option>
 			<option value="19">past_employer_hospital</option>
 			<option value="20">receptionist</option>
 			<option value="=,i,j,k,l,m,n,o">recipient</option>
@@ -354,6 +354,15 @@
 			<option value="p">Name</option>
 			<option value="q">PhoneNum</option>
 			<option value="r">Address</option>
+			//Blood Bank Employee Attributes
+			<option value="z1">EmployeeID</option>
+			<option value="z2">Name</option>
+			<option value="z3">Address</option>
+			<option value="z4">PhoneNum</option>
+			<option value="z5">EmployerName</option>
+			//Past Employer Bloodbank Attributes
+			<option value="x1">EID</option>
+			<option value="x2">PastEmployer</option>
 		</select>
 
 		<label id="chooseAttributeInit">Choose an Attribute</label>
@@ -432,7 +441,7 @@
 	var selectedCell = null;
 	var prevCell = null;
 	var selectedRow = null;
-	var keyCell = null;
+	var rowValues = [];
 	const editForm = document.getElementById("editForm");
 
 	function addTableEvents(){
@@ -440,7 +449,7 @@
 		fullTbody.addEventListener(
 			'click',
 			(e) => {
-				const div = document.getElementById("table_full");
+				const div = document.getElementById('table_full');
 				selectedCell = e.target.closest('td');
 				if(prevCell != null){
 					prevCell.style.backgroundColor = '#ebecf0';
@@ -449,8 +458,12 @@
 				if(!selectedCell) {return;}
 				selectedCell.style.backgroundColor='#636363';
 				selectedRow = selectedCell.parentElement;
-				var rowArray = selectedRow.innerHTML.split("</td>");
-				keyCell = rowArray[0].split(">")[1];
+				var rowArray = selectedRow.getElementsByTagName("td");
+				console.log(rowArray);
+				for(let i = 0; i < rowArray.length; i++){
+					rowValues[i] = rowArray[i].innerHTML;
+					console.log(rowValues);
+				}
 				buildEditPopup(selectedCell.cellIndex);
 			}
 		)
@@ -489,10 +502,10 @@
 		$.ajax({
 			method: 'POST',
 			url: 'runEdit.php',
-			data: { par1: currentTable, par2: selectedColumn, par3: editEntr, par4: currentColumns[0], par5: keyCell },
+			data: { par1: currentTable, par2: selectedColumn, par3: editEntr, par4: currentColumns, par5: rowValues },
 			success: function(data){
 				if(data != "Successful")
-					alert(data)
+					alert(data);
 				else{
 					closeEditPopup();
 					// Search for the same table again to reveal the change.
