@@ -21,6 +21,9 @@
 		$password = $attrEnt;
 		$sql = "SELECT * FROM authorizedlogins WHERE username = '$username' AND password = '$password'";
 		$searchResult = $conn->query($sql);
+		if(!$searchResult){
+			echo $sql;
+		}
 		while($row = mysqli_fetch_array($searchResult)){
 			$resultArray[] = $row;
 		}
@@ -29,6 +32,9 @@
 	else if($attrSelect != null && $attrEnt != null){
 		$sql = "SELECT * FROM $entSelect WHERE $attrSelect = '$attrEnt'";
 		$searchResult = $conn->query($sql);
+		if(!$searchResult){
+			echo $sql;
+		}
 		while($row = mysqli_fetch_array($searchResult)){
 			$resultArray[] = $row;
 		}
@@ -37,6 +43,9 @@
 	else{
 		$sql = "SELECT * FROM $entSelect";
 		$searchResult = $conn->query($sql);
+		if(!$searchResult){
+			echo $sql;
+		}
 		while($row = mysqli_fetch_array($searchResult)){
 			$resultArray[] = $row;
 		}

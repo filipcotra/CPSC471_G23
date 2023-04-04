@@ -218,6 +218,14 @@
   opacity: 0.7;
 }
 
+.editPopup {
+  display: none;
+  position: fixed;
+  bottom: 25%;
+  left: 32.5%;
+  z-index: 1;
+}
+
 #chooseEntity {
 	color:#FFFFFF;
 	font-size:18;
@@ -389,12 +397,14 @@
 	
 	<div class="loginButton">
 		<button type="button" onclick="openLoginPopup()" >Login</button>
+		<button type="button" onclick="hideEdit()" >Logout</button>
 	</div>
 	
 	<div class="editButton" id="editbtn">
-		<button type="button">Edit</button>
+		<button type="button" onclick="openEditPopup()">Edit</button>
+		<button type="button">Insert</button>
+		<button type="button">Delete</button>
 	</div>
-
 
 	<div class="loginPopup" id="loginForm">
   		<form action="/action_page.php" class="login-container">
@@ -407,11 +417,97 @@
 	    	<button type="button" class="btn close" onclick="closeLoginPopup()">Close</button>
 	    </form>
 	</div>
+	
+	<div class="editPopup" id="editForm">
+	</div>
 </div>
 <script>
 //------------------------- Desc -------------------------------------//
-// This method is to handle log in button and display the edit button
-// if login is correct.
+// This method is to show a popup to edit a particular cell, allowing for a
+// particular attribute to be edited.
+//------------------------- Code -------------------------------------//
+	var currentTable = null;
+	var currentColumns = [];
+	var selectedColumn = null;
+	var selectedCell = null;
+	var prevCell = null;
+	var selectedRow = null;
+	var keyCell = null;
+	const editForm = document.getElementById("editForm");
+
+	function addTableEvents(){
+		const fullTbody = document.querySelector('#table_full tbody');
+		fullTbody.addEventListener(
+			'click',
+			(e) => {
+				const div = document.getElementById("table_full");
+				selectedCell = e.target.closest('td');
+				if(prevCell != null){
+					prevCell.style.backgroundColor = '#ebecf0';
+				}
+				prevCell = selectedCell;
+				if(!selectedCell) {return;}
+				selectedCell.style.backgroundColor='#636363';
+				selectedRow = selectedCell.parentElement;
+				var rowArray = selectedRow.innerHTML.split("</td>");
+				keyCell = rowArray[0].split(">")[1];
+				buildEditPopup(selectedCell.cellIndex);
+			}
+		)
+	}
+
+	function buildEditPopup(colIndex){
+		selectedColumn = currentColumns[colIndex];
+		var editInner = ' '
+		editInner += "<form action=\"/action_page.php\" class=\"edit-container\" style=\"padding: 10px; max-width: 400px; background-color: #1c2e4a;\">";
+		editInner += "<h1><font color=white>Edit cell <font color=white></h1>";
+		editInner += "<label for=\"CellName\"><b>"+selectedColumn+"</b></label>";
+		editInner += "<input type=\"text\" name=\"editTo\" id=\"editField\" style=\"width: 100%; padding: 5px; margin: 5px 0px 20px 0px; background-color:powerblue;\">";
+		// Adding buttons to confirm edit or close the popup
+		editInner += "<button type=\"button\" class=\"btn\" style=\"background-color:powderblue; color: black; padding: 15px; width: 100%; margin-bottom:10px;\" onclick=\"pushEdit()\">Edit</button>";
+		editInner += "<button type=\"button\" class=\"btn close\" onclick=\"closeEditPopup()\" style=\"background-color: darkred; color: black; padding: 15px; width: 100%; margin-bottom:10px;\">Close</button>";
+		editInner += "</form>";
+		editForm.innerHTML = editInner;
+	}	
+
+	function openEditPopup(){
+		if(selectedCell == null){
+			return;
+		}
+		editForm.style.display = "block";
+	}
+	
+	function closeEditPopup(){
+		selectedCell.style.backgroundColor='#ebecf0';
+		selectedCell = null;
+		document.getElementById("editForm").style.display = "none";
+	}
+	
+	function pushEdit(){
+		var editInp = document.getElementById("editField");
+		var editEntr = editInp.value;
+		$.ajax({
+			method: 'POST',
+			url: 'runEdit.php',
+			data: { par1: currentTable, par2: selectedColumn, par3: editEntr, par4: currentColumns[0], par5: keyCell },
+			success: function(data){
+				if(data != "Successful")
+					alert(data)
+				else{
+					closeEditPopup();
+					// Search for the same table again to reveal the change.
+					entitySelection = currentTable;
+					attributeSelection = null;
+					attributeEntry = null;
+					console.log(entitySelection, attributeSelection, attributeEntry);
+					search();
+				}
+			}
+		});
+	}
+//------------------------- Desc -------------------------------------//
+// This method is to handle login button and display the edit button
+// if login is correct. Also to remove the button if logging out.
 //------------------------- Code -------------------------------------//
 	//script for handling login button
 	//change to type="submit" for php for Login
@@ -445,15 +541,19 @@
 			dataType:"json"
 		});	
 	}
+	
+	function hideEdit() {
+		document.getElementById("editbtn").style.display = "none";
+	}
+//------------------------- Desc -------------------------------------//
+// This method is to update the display table based on a search result.
+// It will do so by updating the db_table div.
+//------------------------- Code -------------------------------------//
 	// Setting fields to hold dropdown menu information
 	var entitySelection = null;
 	var attributeSelection = null;
 	var attributeEntry = null;
 	var queryResult = null;
-//------------------------- Desc -------------------------------------//
-// This method is to update the display table based on a search result.
-// It will do so by updating the db_table div.
-//------------------------- Code -------------------------------------//
 	// Getting the db_table div so that it can be updated. Also setting
 	// a variable to track the new innerHTML to be inserted.
 	var first = true;
@@ -464,6 +564,7 @@
 	// This function will make a new table from the search results.
 	// Search results will be a 2d array.
 	function createTable(searchResults){
+		currentColumns = [];
 		first = true;
 		tableInner = ' ';
 		colInner = ' ';
@@ -485,6 +586,7 @@
 					colInner += "<td>";
 					colInner += Object.keys(searchResults[i])[j + Object.keys(searchResults[i]).length/2];
 					colInner += "</td>";
+					currentColumns[j] = Object.keys(searchResults[i])[j + Object.keys(searchResults[i]).length/2];
 				}
 			}
 			first = false;
@@ -495,6 +597,8 @@
 		colInner += "</table>";
 		tableDiv.innerHTML = tableInner;
 		tableColDiv.innerHTML = colInner;
+		currentTable = entitySelection;
+		addTableEvents();
 	}
 //------------------------- Desc -------------------------------------//
 // This method is to search the database. I will only be implementing test
