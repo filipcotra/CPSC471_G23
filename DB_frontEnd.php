@@ -497,10 +497,8 @@
 				selectedCell.style.backgroundColor='#636363';
 				selectedRow = selectedCell.parentElement;
 				var rowArray = selectedRow.getElementsByTagName("td");
-				console.log(rowArray);
 				for(let i = 0; i < rowArray.length; i++){
 					rowValues[i] = rowArray[i].innerHTML;
-					console.log(rowValues);
 				}
 				buildEditPopup(selectedCell.cellIndex);
 			}
@@ -554,7 +552,6 @@
 					entitySelection = currentTable;
 					attributeSelection = null;
 					attributeEntry = null;
-					console.log(entitySelection, attributeSelection, attributeEntry);
 					search();
 				}
 			}
@@ -584,12 +581,11 @@
 				if(data != "Successful")
 					alert(data);
 				else{
-					closeEditPopup();
+					closeDeletePopup();
 					// Search for the same table again to reveal the change.
 					entitySelection = currentTable;
 					attributeSelection = null;
 					attributeEntry = null;
-					console.log(entitySelection, attributeSelection, attributeEntry);
 					search();
 				}
 			}
