@@ -30,5 +30,5 @@
 	if($conn->query($sql))
 		echo "Successful";
 	else
-		echo "$sql";
+		echo "Unsuccessful";
 ?>
