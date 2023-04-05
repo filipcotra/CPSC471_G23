@@ -406,7 +406,9 @@
 	</div>
 	
 	<div class="searchButton">
+		<button type="button" onclick="prevTable()">Previous Table</button>
 		<button type="button" onclick="searchCols()">Search</button>
+		<button type="button" onclick="nextTable()">Next Table</button>
 	</div>
 	
 	<div class="loginButton">
@@ -681,6 +683,8 @@
 	const tableColDiv = document.getElementById('table_cols');
 	var colInner = ' ';
 	const attrDiv = document.getElementById('attribute');
+	var allTables = [];
+	var currentTableId = 0;
 	// This function will build the attribute selection dropdown based on the
 	// columns in the table selected.
 	function buildAttributeSelection(){
@@ -711,9 +715,11 @@
 	
 	// This function will make a new table from the search results.
 	// Search results will be a 2d array.
-	function createTable(searchResults){
-		tableInner = ' ';
-		tableInner += "<table>";
+	function createTable(searchResults,id,flag){
+		if(flag){
+			tableInner = ' ';
+		}
+		tableInner += "<table id=\""+id+"\" style=\"display: none\">";
 		// Making rows based on searchResults length.
 		for(let i = 0; i < searchResults.length; i++){
 			tableInner += "<tr>";
@@ -732,6 +738,7 @@
 		tableDiv.innerHTML = tableInner;
 		tableColDiv.innerHTML = colInner;
 		currentTable = entitySelection;
+		console.log(tableInner);
 		buildInsertPopup();
 		addTableEvents();
 	}
@@ -759,10 +766,59 @@
 			url: 'runSelect.php',
 			data: { par1: entitySelection, par2: attributeSelection, par3: attributeEntry },
 			success: function(data){
-				createTable(data);
+				var id = "table";
+				var lowerBound = 0;
+				var upperBound = 5;
+				var isFirst = true;
+				if(data.length <= 5){
+					createTable(data,"onlyTable",isFirst);
+					document.getElementById("onlyTable").style.display = "table";
+				}
+				else{
+					var idNum = 0;
+					while(lowerBound <= data.length-1){
+						if(upperBound > data.length -1){
+							upperBound = data.length;
+						}
+						var newTable = data.slice(lowerBound,upperBound);
+						var tmpId = id + "" + idNum;
+						createTable(newTable,tmpId,isFirst);
+						allTables[idNum] = tmpId;
+						lowerBound += 5;
+						upperBound += 5;
+						idNum++;
+						isFirst = false;
+					}
+					console.log(tableDiv.innerHTML);
+					document.getElementById(allTables[0]).style.display = "table";
+					currentTableId = 0;
+				}
 			},
 			dataType:"json"
 		});	
+	}
+	
+	function nextTable(){
+		console.log(allTables);
+		if(currentTableId == allTables.length - 1){
+			return;
+		}
+		else{
+			document.getElementById(allTables[currentTableId]).style.display = "none";
+			currentTableId++;
+			document.getElementById(allTables[currentTableId]).style.display = "table";
+		}
+	}
+	
+	function prevTable(){
+		if(currentTableId == 0){
+			return;
+		}
+		else{
+			document.getElementById(allTables[currentTableId]).style.display = "none";
+			currentTableId--;
+			document.getElementById(allTables[currentTableId]).style.display = "table";
+		}
 	}
 //------------------------- Desc -------------------------------------//
 // This method is to update the drop down menus so that they will only 
