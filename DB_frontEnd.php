@@ -431,7 +431,7 @@
 	</div>
 	
 	<div class="searchButton">
-		<button type="button" onclick="search()">Search</button>
+		<button type="button" onclick="searchCols()">Search</button>
 	</div>
 	
 	<div class="loginButton">
@@ -648,16 +648,28 @@
 	var tableInner = ' ';
 	const tableColDiv = document.getElementById('table_cols');
 	var colInner = ' ';
+	// This function will put the column names, even if the search returns
+	// no results.
+	function createColumnHeaders(colArray){
+		currentColumns = [];
+		colInner = ' ';
+		colInner += "<table>";
+		colInner += "<tr>";
+		for(let n = 0; n < colArray.length; n++){
+			colInner += "<td>";
+			colInner += colArray[n][0];
+			currentColumns[n] = colArray[n][0];
+			colInner += "</td>";
+		}
+		colInner += "</tr>";
+		colInner += "</table>";
+	}
+	
 	// This function will make a new table from the search results.
 	// Search results will be a 2d array.
 	function createTable(searchResults){
-		currentColumns = [];
-		first = true;
 		tableInner = ' ';
-		colInner = ' ';
 		tableInner += "<table>";
-		colInner += "<table>";
-		colInner += "<tr>";
 		// Making rows based on searchResults length.
 		for(let i = 0; i < searchResults.length; i++){
 			tableInner += "<tr>";
@@ -669,19 +681,10 @@
 				tableInner += searchResults[i][j];
 				tableInner += "</td>";
 				// Adding the key to the header.
-				if(first){
-					colInner += "<td>";
-					colInner += Object.keys(searchResults[i])[j + Object.keys(searchResults[i]).length/2];
-					colInner += "</td>";
-					currentColumns[j] = Object.keys(searchResults[i])[j + Object.keys(searchResults[i]).length/2];
-				}
 			}
-			first = false;
 			tableInner += "</tr>";
 		}
 		tableInner += "</table>";
-		colInner += "</tr>";
-		colInner += "</table>";
 		tableDiv.innerHTML = tableInner;
 		tableColDiv.innerHTML = colInner;
 		currentTable = entitySelection;
@@ -692,7 +695,19 @@
 // values for now. Somebody else should implement an sql SELECT to search for the
 // actual DB results.
 //------------------------- Code -------------------------------------//
-	// Test value
+	function searchCols(){
+		$.ajax({
+			method: 'POST',
+			url: 'runSelectCols.php',
+			data: { par1: entitySelection },
+			success: function(data){
+				createColumnHeaders(data);
+				search();
+			},
+			dataType:"json"
+		});	
+	}
+	
 	function search(){	
 		$.ajax({
 			method: 'POST',
@@ -741,9 +756,12 @@
 				isDone = false;
 			}
 			entitySelection = entity.options[entity.selectedIndex].text;
+			attributeSelection = null;
+			attributeEntry = null;
 			if(entitySelection == "-Select an Entity Type-"){
 				entitySelection = null;
 			}
+			searchCols();
 			//Update dropdown elements
 			attr.innerHTML = attrOptions.filter(
       			option => event.target.value.includes(option.value)
