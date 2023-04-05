@@ -519,7 +519,6 @@
 		for(let m = 0; m < insertFields.length; m++){
 			insertInp[m] = document.getElementById(insertFields[m]).value;
 		}
-		console.log(insertInp);
 		$.ajax({
 			method: 'POST',
 			url: 'runInsert.php',
@@ -738,7 +737,6 @@
 		tableDiv.innerHTML = tableInner;
 		tableColDiv.innerHTML = colInner;
 		currentTable = entitySelection;
-		console.log(tableInner);
 		buildInsertPopup();
 		addTableEvents();
 	}
@@ -789,7 +787,6 @@
 						idNum++;
 						isFirst = false;
 					}
-					console.log(tableDiv.innerHTML);
 					document.getElementById(allTables[0]).style.display = "table";
 					currentTableId = 0;
 				}
@@ -799,7 +796,6 @@
 	}
 	
 	function nextTable(){
-		console.log(allTables);
 		if(currentTableId == allTables.length - 1){
 			return;
 		}

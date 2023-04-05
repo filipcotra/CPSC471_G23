@@ -17,7 +17,7 @@
 	$sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '$dbname' AND TABLE_NAME = '$entSelect'";
 	$searchResult = $conn->query($sql);
 	if(!$searchResult){
-		echo $sql;
+		echo "Unsuccessful";
 	}
 	while($row = mysqli_fetch_array($searchResult)){
 		$resultArray[] = $row;

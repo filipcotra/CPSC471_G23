@@ -22,7 +22,7 @@
 		$sql = "SELECT * FROM authorizedlogins WHERE username = '$username' AND password = '$password'";
 		$searchResult = $conn->query($sql);
 		if(!$searchResult){
-			echo $sql;
+			echo "Unsuccessful";
 		}
 		while($row = mysqli_fetch_array($searchResult)){
 			$resultArray[] = $row;
@@ -33,7 +33,7 @@
 		$sql = "SELECT * FROM $entSelect WHERE $attrSelect = '$attrEnt'";
 		$searchResult = $conn->query($sql);
 		if(!$searchResult){
-			echo $sql;
+			echo "Unsuccessful";
 		}
 		while($row = mysqli_fetch_array($searchResult)){
 			$resultArray[] = $row;
@@ -44,7 +44,7 @@
 		$sql = "SELECT * FROM $entSelect";
 		$searchResult = $conn->query($sql);
 		if(!$searchResult){
-			echo $sql;
+			echo "Unsuccessful";
 		}
 		while($row = mysqli_fetch_array($searchResult)){
 			$resultArray[] = $row;
