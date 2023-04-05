@@ -218,6 +218,36 @@
   opacity: 0.7;
 }
 
+.deletePopup {
+  display: none;
+  position: fixed;
+  bottom: 25%;
+  left: 32.5%;
+  z-index: 1;
+}
+
+.delete-container {
+  padding: 10px;
+  max-width: 400px;
+  background-color: #1c2e4a;
+}
+
+.delete-container .btn {
+  background-color:powderblue;
+  color: black;
+  padding: 15px;
+  width: 100%;
+  margin-bottom:10px;
+}
+
+.delete-container .close {
+  background-color: darkred;
+}
+
+.delete-container .btn:hover {
+  opacity: 0.7;
+}
+
 .editPopup {
   display: none;
   position: fixed;
@@ -412,7 +442,7 @@
 	<div class="editButton" id="editbtn">
 		<button type="button" onclick="openEditPopup()">Edit</button>
 		<button type="button">Insert</button>
-		<button type="button">Delete</button>
+		<button type="button" onclick="openDeletePopup()">Delete</button>
 	</div>
 
 	<div class="loginPopup" id="loginForm">
@@ -429,11 +459,19 @@
 	
 	<div class="editPopup" id="editForm">
 	</div>
+	
+	<div class="deletePopup" id="deleteForm">
+	  	<form action="/action_page.php" class="delete-container">
+	    	<h1><font color=white>Confirm: Delete row of selected cell?<font color=white></h1>
+	    	<button type="button" class="btn" onclick="pushDelete()" >Delete</button>
+	    	<button type="button" class="btn close" onclick="closeDeletePopup()">Close</button>
+	    </form>
+	</div>
 </div>
 <script>
 //------------------------- Desc -------------------------------------//
-// This method is to show a popup to edit a particular cell, allowing for a
-// particular attribute to be edited.
+// This method is to add events to the table after it has been made, and to
+// assign selection to fields.
 //------------------------- Code -------------------------------------//
 	var currentTable = null;
 	var currentColumns = [];
@@ -469,6 +507,10 @@
 		)
 	}
 
+//------------------------- Desc -------------------------------------//
+// This method is to show a popup to edit a particular cell, allowing for a
+// particular attribute to be edited.
+//------------------------- Code -------------------------------------//
 	function buildEditPopup(colIndex){
 		selectedColumn = currentColumns[colIndex];
 		var editInner = ' '
@@ -518,6 +560,42 @@
 			}
 		});
 	}
+	
+//------------------------- Desc -------------------------------------//
+// This method is to handle deletion of rows from the database.
+//------------------------- Code -------------------------------------//
+	function openDeletePopup(){
+		if(selectedCell == null){
+			return;
+		}
+		document.getElementById("deleteForm").style.display="inline-block";
+	}	
+	
+	function closeDeletePopup(){
+		document.getElementById("deleteForm").style.display="none";
+	}	
+	
+	function pushDelete(){
+		$.ajax({
+			method: 'POST',
+			url: 'runDelete.php',
+			data: { par1: currentTable, par2: currentColumns, par3: rowValues },
+			success: function(data){
+				if(data != "Successful")
+					alert(data);
+				else{
+					closeEditPopup();
+					// Search for the same table again to reveal the change.
+					entitySelection = currentTable;
+					attributeSelection = null;
+					attributeEntry = null;
+					console.log(entitySelection, attributeSelection, attributeEntry);
+					search();
+				}
+			}
+		});	
+	}
+	
 //------------------------- Desc -------------------------------------//
 // This method is to handle login button and display the edit button
 // if login is correct. Also to remove the button if logging out.
