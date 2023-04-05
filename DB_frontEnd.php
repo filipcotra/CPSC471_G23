@@ -256,6 +256,14 @@
   z-index: 1;
 }
 
+.insertPopup {
+  display: none;
+  position: fixed;
+  bottom: 25%;
+  left: 32.5%;
+  z-index: 1;
+}
+
 #chooseEntity {
 	color:#FFFFFF;
 	font-size:18;
@@ -321,33 +329,33 @@
 		<br></br>
 		<select id="entity">
 			<option value="+">-Select an Entity Type-</option>
-			<option value="=,a,b,c,d">administered_to</option>
-			<option value="2">advertiser</option>
-			<option value="3">blood</option>
-			<option value="=,e,f,g,h">blood_bank</option>
-			<option value="=,z1,z2,z3,z4,z5">blood_bank_employee</option>
-			<option value="6">blood_tester</option>
-			<option value="7">delivered_blood_to</option>
-			<option value="8">distributor</option>
-			<option value="9">doctor</option>
-			<option value="10">donates_to</option>
-			<option value="=,i,j,k,l,m,n,o">donor</option>
-			<option value="12">donor_addresses</option>
-			<option value="13">donor_phones</option>
-			<option value="14">donor_technician</option>
-			<option value="=,p,q,r">hospital</option>
-			<option value="16">hospital_employee</option>
-			<option value="17">nurse</option>
-			<option value="=,x1,x2">past_employer_bloodbank</option>
-			<option value="19">past_employer_hospital</option>
-			<option value="20">receptionist</option>
-			<option value="=,i,j,k,l,m,n,o">recipient</option>
-			<option value="22">recipient_addresses</option>
-			<option value="23">recipient_phones</option>
-			<option value="24">sends_results</option>
-			<option value="25">stored_by</option>
-			<option value="26">transferred_blood_to_bank</option>
-			<option value="27">transferred_blood_to_distributor</option>
+			<option value="=">administered_to</option>
+			<option value="=">advertiser</option>
+			<option value="=">blood</option>
+			<option value="=">blood_bank</option>
+			<option value="=">blood_bank_employee</option>
+			<option value="=">blood_tester</option>
+			<option value="=">delivered_blood_to</option>
+			<option value="=">distributor</option>
+			<option value="=">doctor</option>
+			<option value="=">donates_to</option>
+			<option value="=">donor</option>
+			<option value="=">donor_addresses</option>
+			<option value="=">donor_phones</option>
+			<option value="=">donor_technician</option>
+			<option value="=">hospital</option>
+			<option value="=">hospital_employee</option>
+			<option value="=">nurse</option>
+			<option value="=">past_employer_bloodbank</option>
+			<option value="=">past_employer_hospital</option>
+			<option value="=">receptionist</option>
+			<option value="=">recipient</option>
+			<option value="=">recipient_addresses</option>
+			<option value="=">recipient_phones</option>
+			<option value="=">sends_results</option>
+			<option value="=">stored_by</option>
+			<option value="=">transferred_blood_to_bank</option>
+			<option value="=">transferred_blood_to_distributor</option>
 		</select>
 	</div>
 
@@ -358,41 +366,8 @@
 		<br></br>
 		<br></br>
 		<select id="attribute">
-			//If default is for some reason re-selected
-			<option value="+">-First Select an Entity-</option>
 			//Once a value is selected - always included
 			<option value="=">-Select an Attribute-</option>
-			//AdministeredTo Attributes
-			<option value="a">Donor Health ID</option>
-			<option value="b">Date of Donation</option>
-			<option value="c">Receipient Health ID</option>
-			<option value="d">Date of Administration</option>
-			//Blood Bank Attributes
-			<option value="e">Name</option>
-			<option value="f">StorageConditions</option>
-			<option value="g">Address</option>
-			<option value="h">PhoneNum</option>
-			//Donor and Recipient Attributes
-			<option value="i">Age</option>
-			<option value="j">FName</option>
-			<option value="k">HealthID</option>
-			<option value="l">LName</option>
-			<option value="m">MName</option>
-			<option value="n">ReceptionistName</option>
-			<option value="o">TechnicianName</option>
-			//Hospital Attributes
-			<option value="p">Name</option>
-			<option value="q">PhoneNum</option>
-			<option value="r">Address</option>
-			//Blood Bank Employee Attributes
-			<option value="z1">EmployeeID</option>
-			<option value="z2">Name</option>
-			<option value="z3">Address</option>
-			<option value="z4">PhoneNum</option>
-			<option value="z5">EmployerName</option>
-			//Past Employer Bloodbank Attributes
-			<option value="x1">EID</option>
-			<option value="x2">PastEmployer</option>
 		</select>
 
 		<label id="chooseAttributeInit">Choose an Attribute</label>
@@ -441,7 +416,7 @@
 	
 	<div class="editButton" id="editbtn">
 		<button type="button" onclick="openEditPopup()">Edit</button>
-		<button type="button">Insert</button>
+		<button type="button" onclick="openInsertPopup()">Insert</button>
 		<button type="button" onclick="openDeletePopup()">Delete</button>
 	</div>
 
@@ -467,6 +442,9 @@
 	    	<button type="button" class="btn close" onclick="closeDeletePopup()">Close</button>
 	    </form>
 	</div>
+	
+	<div class="insertPopup" id="insertForm">
+	</div>
 </div>
 <script>
 //------------------------- Desc -------------------------------------//
@@ -480,7 +458,9 @@
 	var prevCell = null;
 	var selectedRow = null;
 	var rowValues = [];
+	var insertFields = [];
 	const editForm = document.getElementById("editForm");
+	const insertForm = document.getElementById("insertForm");
 
 	function addTableEvents(){
 		const fullTbody = document.querySelector('#table_full tbody');
@@ -503,6 +483,58 @@
 				buildEditPopup(selectedCell.cellIndex);
 			}
 		)
+	}
+//------------------------- Desc -------------------------------------//
+// This method is to show a popup to insert into a particular table.
+//------------------------- Code -------------------------------------//
+	function buildInsertPopup(){
+		var insertInner = ' ';
+		insertInner += "<form action=\"/action_page.php\" class=\"insert-container\" style=\"padding: 10px; max-width: 400px; background-color: #1c2e4a;\">";
+		insertInner += "<h1><font color=white>Insert Into " + currentTable + "<font color=white></h1>";
+		for(let q = 0; q < currentColumns.length; q++){	
+			insertInner += "<label for=\"CellName\"><b>"+currentColumns[q]+"</b></label>";
+			insertInner += 	"<br></br>";
+			var tmpId = "insertField"+q;
+			insertInner += "<input type=\"text\" name=\"insertValue\" id=\"" + tmpId + "\" style=\"width: 100%; padding: 5px; margin: 5px 0px 20px 0px; background-color:powerblue;\">";
+			insertFields[q] = tmpId;
+		}
+		insertInner += "<button type=\"button\" class=\"btn\" style=\"background-color:powderblue; color: black; padding: 15px; width: 100%; margin-bottom:10px;\" onclick=\"pushInsert()\">Insert</button>";
+		insertInner += "<button type=\"button\" class=\"btn close\" onclick=\"closeInsertPopup()\" style=\"background-color: darkred; color: black; padding: 15px; width: 100%; margin-bottom:10px;\">Close</button>";
+		insertInner += "</form>";
+		insertForm.innerHTML = insertInner;
+	}	
+	
+	function openInsertPopup(){
+		insertForm.style.display = "block";
+	}
+
+	function closeInsertPopup(){
+		insertForm.style.display = "none";
+	}
+	
+	function pushInsert(){
+		var insertInp = [];
+		for(let m = 0; m < insertFields.length; m++){
+			insertInp[m] = document.getElementById(insertFields[m]).value;
+		}
+		console.log(insertInp);
+		$.ajax({
+			method: 'POST',
+			url: 'runInsert.php',
+			data: { par1: currentTable, par2: insertInp },
+			success: function(data){
+				if(data != "Successful")
+					alert(data);
+				else{
+					closeInsertPopup();
+					// Search for the same table again to reveal the change.
+					entitySelection = currentTable;
+					attributeSelection = null;
+					attributeEntry = null;
+					search();
+				}
+			}
+		});
 	}
 
 //------------------------- Desc -------------------------------------//
@@ -648,6 +680,17 @@
 	var tableInner = ' ';
 	const tableColDiv = document.getElementById('table_cols');
 	var colInner = ' ';
+	const attrDiv = document.getElementById('attribute');
+	// This function will build the attribute selection dropdown based on the
+	// columns in the table selected.
+	function buildAttributeSelection(){
+		var attrDivInner = ' ';
+		attrDivInner += "<option value=\"=\">-Select an Attribute-</option>";
+		for(let p = 0; p < currentColumns.length; p++){
+			attrDivInner += "<option value=\"=\">"+currentColumns[p]+"</option>";
+		}
+		attrDiv.innerHTML = attrDivInner;
+	}
 	// This function will put the column names, even if the search returns
 	// no results.
 	function createColumnHeaders(colArray){
@@ -663,6 +706,7 @@
 		}
 		colInner += "</tr>";
 		colInner += "</table>";
+		buildAttributeSelection();
 	}
 	
 	// This function will make a new table from the search results.
@@ -688,6 +732,7 @@
 		tableDiv.innerHTML = tableInner;
 		tableColDiv.innerHTML = colInner;
 		currentTable = entitySelection;
+		buildInsertPopup();
 		addTableEvents();
 	}
 //------------------------- Desc -------------------------------------//
