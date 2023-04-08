@@ -322,7 +322,7 @@
 
 <div class="container">
 	<div class="leftSide">
-		<label id="chooseEntity">Choose an entity</label>
+		<label id="chooseEntity">Choose an Entity</label>
 		<br></br>
 		<br></br>
 		<br></br>
@@ -532,6 +532,7 @@
 					entitySelection = currentTable;
 					attributeSelection = null;
 					attributeEntry = null;
+					selectedCell = null;
 					search();
 				}
 			}
