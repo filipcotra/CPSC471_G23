@@ -463,13 +463,12 @@
 	var insertFields = [];
 	const editForm = document.getElementById("editForm");
 	const insertForm = document.getElementById("insertForm");
+	var loggedIn = false;
 
-	function addTableEvents(){
-		const fullTbody = document.querySelector('#table_full tbody');
-		fullTbody.addEventListener(
+	function addTableEvents(id){
+		document.getElementById(id).addEventListener(
 			'click',
 			(e) => {
-				const div = document.getElementById('table_full');
 				selectedCell = e.target.closest('td');
 				if(prevCell != null){
 					prevCell.style.backgroundColor = '#ebecf0';
@@ -515,6 +514,10 @@
 	}
 	
 	function pushInsert(){
+		if(!loggedIn){
+			alert("Error: Not Logged In");
+			return;
+		}
 		var insertInp = [];
 		for(let m = 0; m < insertFields.length; m++){
 			insertInp[m] = document.getElementById(insertFields[m]).value;
@@ -571,6 +574,10 @@
 	}
 	
 	function pushEdit(){
+		if(!loggedIn){
+			alert("Error: Not Logged In");
+			return;
+		}
 		var editInp = document.getElementById("editField");
 		var editEntr = editInp.value;
 		$.ajax({
@@ -607,6 +614,10 @@
 	}	
 	
 	function pushDelete(){
+		if(!loggedIn){
+			alert("Error: Not Logged In");
+			return;
+		}
 		$.ajax({
 			method: 'POST',
 			url: 'runDelete.php',
@@ -653,6 +664,7 @@
 			success: function(data){
 				if(data.length > 0){
 					closeLoginPopup();
+					loggedIn = true;
 					document.getElementById("editbtn").style.display="inline-block";
 				}
 				else{
@@ -664,6 +676,7 @@
 	}
 	
 	function hideEdit() {
+		loggedIn = false;
 		document.getElementById("editbtn").style.display = "none";
 	}
 //------------------------- Desc -------------------------------------//
@@ -739,7 +752,6 @@
 		tableColDiv.innerHTML = colInner;
 		currentTable = entitySelection;
 		buildInsertPopup();
-		addTableEvents();
 	}
 //------------------------- Desc -------------------------------------//
 // This method is to search the database. I will only be implementing test
@@ -770,8 +782,11 @@
 				var upperBound = 5;
 				var isFirst = true;
 				if(data.length <= 5){
-					createTable(data,"onlyTable",isFirst);
+					console.log("here");
+					createTable(data,"table0",isFirst);
 					document.getElementById("onlyTable").style.display = "table";
+					addTableEvents("table0");
+					allTables[0] = "table0";
 				}
 				else{
 					var idNum = 0;
@@ -790,6 +805,7 @@
 					}
 					document.getElementById(allTables[0]).style.display = "table";
 					currentTableId = 0;
+					addTableEvents(allTables[currentTableId]);
 				}
 			},
 			dataType:"json"
@@ -804,6 +820,7 @@
 			document.getElementById(allTables[currentTableId]).style.display = "none";
 			currentTableId++;
 			document.getElementById(allTables[currentTableId]).style.display = "table";
+			addTableEvents(allTables[currentTableId]);
 		}
 	}
 	
@@ -815,6 +832,7 @@
 			document.getElementById(allTables[currentTableId]).style.display = "none";
 			currentTableId--;
 			document.getElementById(allTables[currentTableId]).style.display = "table";
+			addTableEvents(allTables[currentTableId]);
 		}
 	}
 //------------------------- Desc -------------------------------------//
